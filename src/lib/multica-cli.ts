@@ -26,7 +26,7 @@ async function exec(
 ): Promise<ExecResult> {
   const timeoutMs = opts.timeoutMs ?? 30_000;
   return new Promise((resolve, reject) => {
-    const child = spawn("multica", args, {
+    const child = spawn(process.env.MULTICA_BIN ?? "multica", args, {
       env: process.env,
       stdio: ["pipe", "pipe", "pipe"],
     });
@@ -44,7 +44,7 @@ async function exec(
       if ((err as NodeJS.ErrnoException).code === "ENOENT") {
         reject(
           new MulticaCliError(
-            "multica CLI not found on PATH. Install via: brew install multica-ai/tap/multica",
+            "multica CLI not found on PATH (or MULTICA_BIN). Install via: brew install multica-ai/tap/multica, or point MULTICA_BIN at the binary (macOS app: /Applications/Multica.app/Contents/Resources/app.asar.unpacked/resources/bin/multica)",
             "not_found",
           ),
         );

@@ -20,7 +20,7 @@ If you spend your thinking time in an LLM chat (Claude Desktop, Codex Desktop, o
 
 ## Requirements
 
-- `multica` installed on `PATH` and authenticated
+- `multica` CLI 0.6 or newer installed on `PATH` (or pointed to with `MULTICA_BIN`) and authenticated
 - Multica daemon running
 - Node.js 20+
 - `pnpm`
@@ -52,6 +52,7 @@ Tool calls are logged as JSONL with `timestamp`, `tool`, `params`, `duration_ms`
 | Env var                | Purpose                                                   |
 | ---------------------- | --------------------------------------------------------- |
 | `MULTICA_APP_URL`      | Base URL used when building issue and project URLs        |
+| `MULTICA_BIN`          | Path to the `multica` binary when it is not on `PATH` (e.g. the copy inside Multica.app on macOS) |
 | `MULTICA_MCP_LOG_PATH` | Absolute path override for the JSONL log                  |
 | `XDG_STATE_HOME`       | Standard XDG base dir for the default log location        |
 
@@ -97,6 +98,7 @@ Returns `{ id, short_id, title, status, assignee, url }`.
   "assignee": "claude-sonnet",
   "project": "Onboarding revamp",
   "priority": "medium",
+  "status": "backlog",
   "cwd": "/path/to/repo"
 }
 ```

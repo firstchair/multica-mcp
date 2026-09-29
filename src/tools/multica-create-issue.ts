@@ -37,6 +37,7 @@ export const multicaCreateIssueSchema = z.object({
   assignee: z.string().optional(),
   project: z.string().optional(),
   priority: z.enum(PRIORITIES).optional().default("medium"),
+  status: z.string().optional(),
   parent_issue_id: z.string().optional(),
   cwd: z.string().optional(),
 });
@@ -71,8 +72,13 @@ export async function multicaCreateIssue(
   const args = ["issue", "create", "--title", input.title];
   const description = withWorkingDirectoryHint(input.description, input.cwd);
 
+  // --description decodes backslash escapes; stdin keeps markdown verbatim.
   if (description) {
-    args.push("--description", description);
+    args.push("--description-stdin");
+  }
+
+  if (input.status) {
+    args.push("--status", input.status);
   }
 
   if (input.assignee) {
@@ -93,7 +99,9 @@ export async function multicaCreateIssue(
     args.push("--project", project.id);
   }
 
-  const issue = await runMulticaJson<Issue>(args);
+  const issue = await runMulticaJson<Issue>(args, {
+    stdin: description,
+  });
   const appUrl = await resolveAppUrl();
 
   return {

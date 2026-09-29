@@ -26,9 +26,9 @@ export async function multicaListComments(
   input: MulticaListCommentsInput,
 ): Promise<ListResult<CommentSummary>> {
   const issueId = await resolveIssueId(input.issue_id);
-  const args = ["issue", "comment", "list", issueId];
-  if (input.limit) args.push("--limit", String(input.limit));
-  if (input.offset) args.push("--offset", String(input.offset));
+  // CLI >= 0.6 has no --limit/--offset on `issue comment list`; it folds
+  // resolved threads by default, so ask for --full and paginate here.
+  const args = ["issue", "comment", "list", issueId, "--full"];
   if (input.since) args.push("--since", input.since);
 
   const [comments, agents] = await Promise.all([
@@ -40,7 +40,13 @@ export async function multicaListComments(
     return { items: [], state: "empty", message: "No comments match." };
   }
 
-  const items = comments.map((comment) => ({
+  const offset = input.offset ?? 0;
+  const page = input.limit ? comments.slice(offset, offset + input.limit) : comments.slice(offset);
+  if (page.length === 0) {
+    return { items: [], state: "empty", message: "No comments match." };
+  }
+
+  const items = page.map((comment) => ({
     id: comment.id,
     parent_id: comment.parent_id,
     author:

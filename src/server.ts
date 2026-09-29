@@ -219,7 +219,7 @@ async function main() {
 
   server.tool(
     "multica_create_issue",
-    "Create a new issue, optionally assigned to an agent. Use a detailed description (>200 chars) for good agent context. The cwd param is a hint injected into the description because the CLI has no native working-directory flag.",
+    "Create a new issue, optionally assigned to an agent. Use a detailed description (>200 chars) for good agent context; it is passed to the CLI verbatim (markdown, backslashes intact). Set status (e.g. backlog) to control the column; assigning an agent or squad starts a run. The cwd param is a hint injected into the description because the CLI has no native working-directory flag.",
     multicaCreateIssueSchema.shape,
     wrap("multica_create_issue", async (input) => multicaCreateIssue(input)),
   );

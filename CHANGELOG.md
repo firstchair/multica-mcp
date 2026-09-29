@@ -4,6 +4,23 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-09-29
+
+### Fixed
+
+- `multica_workspace_members` now calls `workspace member list` (the `workspace members`
+  form is gone from CLI 0.6 and rejected `--output json`).
+- `multica_list_comments` no longer passes `--limit`/`--offset` (removed from
+  `issue comment list` in CLI 0.6); pagination happens in the tool. Passes `--full`
+  so folded resolved threads are not silently dropped.
+- Smoke test cancels its test issue on cleanup; deleting the project left it in the backlog.
+
+### Added
+
+- `multica_create_issue`: optional `status`; the description is sent via
+  `--description-stdin` so markdown and backslashes survive verbatim.
+- `MULTICA_BIN` environment variable to point at a `multica` binary that is not on `PATH`.
+
 ## [0.3.0] - 2026-04-19
 
 ### Added

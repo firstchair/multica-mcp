@@ -26,9 +26,21 @@ function parseToolText<T>(response: {
   return JSON.parse(response.content[0].text) as T;
 }
 
+const MULTICA_BIN = process.env.MULTICA_BIN ?? "multica";
+
 function cleanupProject(projectId: string | null): void {
   if (!projectId) return;
-  spawnSync("multica", ["project", "delete", projectId], {
+  spawnSync(MULTICA_BIN, ["project", "delete", projectId], {
+    stdio: "ignore",
+  });
+}
+
+// Deleting the project does not delete its issues, so the smoke issue would
+// otherwise linger in the workspace backlog. There is no `issue delete`;
+// cancelling with --no-start is the closest thing.
+function cleanupIssue(issueId: string | null): void {
+  if (!issueId) return;
+  spawnSync(MULTICA_BIN, ["issue", "status", issueId, "cancelled", "--no-start"], {
     stdio: "ignore",
   });
 }
@@ -413,6 +425,7 @@ async function main() {
     );
   } finally {
     child.kill();
+    cleanupIssue(createdIssueShortId);
     cleanupProject(createdProjectId);
   }
 
